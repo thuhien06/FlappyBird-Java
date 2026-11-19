@@ -12,6 +12,8 @@ public class Bird {
     private int x;
     private double y;
     private double velocity; //Vận tốc của chim
+    private final int width = 30;
+    private final int height = 30;
 
     private final double gravity = 0.5; //Lực trọng trường khiến chim rơi.
     private final double jumpStrength = -8; //Lực đẩy chim lên khi nhấn SPACE.
@@ -39,5 +41,13 @@ public class Bird {
 
     public int getY() {
         return (int) y;
+    }
+    
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

@@ -14,6 +14,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import objects.Bird;
 import objects.Pipe;
+import java.util.ArrayList;
+import java.awt.Rectangle;
 
 /**
  *
@@ -23,14 +25,18 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     private Bird bird;
     private Timer timer;
-    private Pipe pipe;
+    private ArrayList<Pipe> pipes;
 
     public GamePanel() {
         setPreferredSize(new java.awt.Dimension(800, 600));
         setBackground(Color.CYAN);
 
         bird = new Bird();
-        pipe = new Pipe(800);
+        pipes = new ArrayList<>();
+
+        pipes.add(new Pipe(800));
+        pipes.add(new Pipe(1100));
+        pipes.add(new Pipe(1400));
 
         addKeyListener(this);
         setFocusable(true);
@@ -41,13 +47,19 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
         bird.update();
-        pipe.update();
 
-        // Khi ống đi hết màn hình
-        if (pipe.getX() + pipe.getWidth() < 0) {
-            pipe.reset(800);
+        for (Pipe pipe : pipes) {
+            pipe.update();
+
+            if (pipe.getX() + pipe.getWidth() < 0) {
+                pipe.reset(pipe.getX() + 900);
+            }
+        }
+
+        if (checkCollision()) {
+            timer.stop();
+            System.out.println("GAME OVER!");
         }
 
         repaint();
@@ -62,7 +74,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         g.fillOval(bird.getX(), bird.getY(), 40, 40);
 
         // Vẽ ống trên và dưới
-        pipe.draw(g);
+        for (Pipe pipe : pipes) {
+            pipe.draw(g);
+        }
     }
 
     @Override
@@ -78,5 +92,41 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {
+    }
+    
+    private boolean checkCollision() {
+        Rectangle birdBounds = new Rectangle(
+                bird.getX(),
+                bird.getY(),
+                bird.getWidth(),
+                bird.getHeight()
+        );
+        if (birdBounds.y <= 0
+                || birdBounds.y + birdBounds.height >= 600) {
+            return true;
+        }
+
+        for (Pipe pipe : pipes) {
+            Rectangle topPipe = new Rectangle(
+                    pipe.getX(),
+                    0,
+                    pipe.getWidth(),
+                    pipe.getGapY()
+            );
+
+            Rectangle bottomPipe = new Rectangle(
+                    pipe.getX(),
+                    pipe.getGapY() + pipe.getGap(),
+                    pipe.getWidth(),
+                    600 - (pipe.getGapY() + pipe.getGap())
+            );
+
+            if (birdBounds.intersects(topPipe)
+                    || birdBounds.intersects(bottomPipe)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
