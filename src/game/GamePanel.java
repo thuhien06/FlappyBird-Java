@@ -7,6 +7,7 @@ package game;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,6 +27,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private Bird bird;
     private Timer timer;
     private ArrayList<Pipe> pipes;
+    private boolean gameOver = false;
+    private int score = 0;
 
     public GamePanel() {
         setPreferredSize(new java.awt.Dimension(800, 600));
@@ -52,16 +55,21 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         for (Pipe pipe : pipes) {
             pipe.update();
 
+            if (!pipe.isPassed()
+                    && pipe.getX() + pipe.getWidth() < bird.getX()) {
+                score++;
+                pipe.setPassed(true);
+            }
+
             if (pipe.getX() + pipe.getWidth() < 0) {
                 pipe.reset(pipe.getX() + 900);
             }
         }
 
         if (checkCollision()) {
+            gameOver = true;
             timer.stop();
-            System.out.println("GAME OVER!");
         }
-
         repaint();
     }
 
@@ -76,6 +84,16 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         // Vẽ ống trên và dưới
         for (Pipe pipe : pipes) {
             pipe.draw(g);
+        }
+        
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", Font.BOLD, 30));
+        g.drawString("Score: " + score, 20, 40);
+        
+        if (gameOver) {
+            g.setColor(Color.RED);
+            g.setFont(new Font("Arial", Font.BOLD, 40));
+            g.drawString("GAME OVER", 270, 280);
         }
     }
 

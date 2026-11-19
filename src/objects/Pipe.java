@@ -14,6 +14,7 @@ import java.util.Random;
 public class Pipe {
     private int x;
     private int gapY;
+    private boolean passed = false;
 
     private final int width = 60;
     private final int gap = 170;
@@ -50,6 +51,7 @@ public class Pipe {
     public void reset(int newX) {
         x = newX;
         gapY = 150 + random.nextInt(250);
+        passed = false;
     }
 
     public int getX() {
@@ -66,5 +68,13 @@ public class Pipe {
 
     public int getGap() {
         return gap;
+    }
+    
+    public boolean isPassed() {
+        return passed;
+    }
+
+    public void setPassed(boolean passed) {
+        this.passed = passed;
     }
 }
