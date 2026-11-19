@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import objects.Bird;
+import objects.Pipe;
 
 /**
  *
@@ -22,12 +23,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     private Bird bird;
     private Timer timer;
+    private Pipe pipe;
 
     public GamePanel() {
         setPreferredSize(new java.awt.Dimension(800, 600));
         setBackground(Color.CYAN);
 
         bird = new Bird();
+        pipe = new Pipe(800);
 
         addKeyListener(this);
         setFocusable(true);
@@ -38,7 +41,15 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
         bird.update();
+        pipe.update();
+
+        // Khi ống đi hết màn hình
+        if (pipe.getX() + pipe.getWidth() < 0) {
+            pipe.reset(800);
+        }
+
         repaint();
     }
 
@@ -51,9 +62,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         g.fillOval(bird.getX(), bird.getY(), 40, 40);
 
         // Vẽ ống trên và dưới
-        g.setColor(Color.GREEN);
-        g.fillRect(650, 0, 60, 200);
-        g.fillRect(650, 350, 60, 250);
+        pipe.draw(g);
     }
 
     @Override
